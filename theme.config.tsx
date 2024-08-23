@@ -16,7 +16,10 @@ const config: DocsThemeConfig = {
   darkMode: true,
   primaryHue: 120,
   primarySaturation: 40,
+  i18n: [
+    { locale: "en-US", text: "English" },
+    { locale: "ko-KR", text: "한국어" },
+  ],
 };
-
 
 export default config;
