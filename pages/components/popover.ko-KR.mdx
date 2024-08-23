@@ -1,3 +1,24 @@
 # Popover
 
 팝오버는 트리거 요소를 기준으로 위치가 정해지는 오버레이 요소입니다. 이 오버레이에는 다양하고 자유로운 형태의 콘텐츠를 표시할 수 있습니다.
+
+import { Popover } from "@seonghunyang/zero-one";
+import Preview from "/components/preview";
+import { Tabs } from "nextra/components";
+
+<Tabs items={["Preview", "Code"]}>
+  <Tabs.Tab>
+    <Preview>
+      <Popover>
+        <Popover.Trigger>click</Popover.Trigger>
+        <Popover.Content className="w-52 origin-top-right rounded-xl border bg-black/5 p-1 text-sm/6  transition duration-100 ease-out [--anchor-gap:var(--spacing-1)] focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0">
+          <div>Popover content</div>
+        </Popover.Content>
+      </Popover>
+    </Preview>
+  </Tabs.Tab>
+  <Tabs.Tab>
+    **npm** is a package manager for the JavaScript programming language.
+  </Tabs.Tab>
+</Tabs>
+;
