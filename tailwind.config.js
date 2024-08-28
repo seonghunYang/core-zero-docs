@@ -9,7 +9,18 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,md,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        opacity: {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+      },
+      animation: {
+        "opacity-show": "opacity 0.2s ease-in",
+        "opacity-show-reverse": "opacity 0.2s reverse ease-in",
+      },
+    },
   },
   plugins: [],
 };
