@@ -2,7 +2,7 @@
 
 팝오버는 트리거 요소를 기준으로 위치가 정해지는 오버레이 요소입니다. 이 오버레이에는 다양하고 자유로운 형태의 콘텐츠를 표시할 수 있습니다.
 
-import { Popover } from "@seonghunyang/zero-one";
+import { Popover } from "zeroless";
 import Preview from "/components/preview";
 import { Tabs } from "nextra/components";
 
@@ -25,7 +25,7 @@ import { Tabs } from "nextra/components";
       <Popover.Trigger className="block text-sm/6 border rounded-lg px-3 border-black/50 font-semibold text-black/50 focus:outline-none data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-black">
         popover
       </Popover.Trigger>
-      <Popover.Content className="w-52 rounded-xl bg-black/5 text-sm/6 animate-opacity-show">
+      <Popover.Content className="w-52 rounded-xl bg-black/5 text-sm/6 animate-opacity-show animate-opacity-show-reverse">
         <div>Popover content</div>
       </Popover.Content>
     </Popover>
@@ -33,3 +33,7 @@ import { Tabs } from "nextra/components";
   </Tabs.Tab>
 </Tabs>
 ;
+
+## Basic exmaple
+
+### Controlled
