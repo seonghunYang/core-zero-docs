@@ -10,15 +10,23 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary:
+          "hsl(var(--nextra-primary-hue)var(--nextra-primary-saturation)64%)",
+      },
       keyframes: {
         opacity: {
           from: { opacity: 0 },
           to: { opacity: 1 },
         },
+        opacityReverse: {
+          from: { opacity: 1 },
+          to: { opacity: 0 },
+        },
       },
       animation: {
         "opacity-show": "opacity 0.2s ease-in",
-        "opacity-show-reverse": "opacity 0.2s reverse ease-in",
+        "opacity-show-reverse": "opacityReverse 0.2s ease-in",
       },
     },
   },
