@@ -1,7 +1,7 @@
 {
-  "name": "nextra-docs-template",
+  "name": "zeroless-docs",
   "version": "0.0.1",
-  "description": "Nextra docs template",
+  "description": "zeroless library docs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,21 +9,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shuding/nextra-docs-template.git"
+    "url": "git+https://github.com/seonghunYang/zeroless-docs.git"
   },
   "author": "Shu Ding <g@shud.in>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shuding/nextra-docs-template/issues"
+    "url": "https://github.com/seonghunYang/zeroless-docs/issues"
   },
-  "homepage": "https://github.com/shuding/nextra-docs-template#readme",
+  "homepage": "https://github.com/seonghunYang/zeroless-docs#readme",
   "dependencies": {
-    "@seonghunyang/zero-one": "^0.0.8",
     "next": "^13.4.19",
     "nextra": "latest",
     "nextra-theme-docs": "latest",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "zeroless": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "18.11.10",
