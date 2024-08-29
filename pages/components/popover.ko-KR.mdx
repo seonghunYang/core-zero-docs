@@ -5,12 +5,13 @@
 import { Popover } from "zeroless";
 import Preview, { Item } from "/components/preview";
 import { Tabs } from "nextra/components";
+import clsx from "clsx";
 
 <Tabs items={["Preview", "Code"]}>
   <Tabs.Tab>
     <Preview>
-      <Popover placement={"bottom"} offset={5}>
-        <Popover.Trigger className="text-black/70 px-2 rounded-lg data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-primary">
+      <Popover shouldFlip={true} placement={"bottom"} offset={5}>
+        <Popover.Trigger className="px-2 text-black/70  rounded-lg data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-primary">
           popover
         </Popover.Trigger>
         <Popover.Content className="shadow-lg text-sm/6 rounded-xl bg-white data-[closed]:animate-opacity-show-reverse data-[open]:animate-opacity-show data-[active]:ring-primary data-[active]:ring-2">
@@ -37,8 +38,8 @@ import { Tabs } from "nextra/components";
 ```jsx
 export default function Example() {
   return (
-    <Popover placement={"bottom"} offset={10}>
-      <Popover.Trigger className="text-black/70 px-2 rounded-lg data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-primary">
+    <Popover shouldFlip={true} placement={"bottom"} offset={10}>
+      <Popover.Trigger className=" px-2 text-black/70 rounded-lg data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-primary">
         popover
       </Popover.Trigger>
       <Popover.Content className="shadow-lg text-sm/6 rounded-xl bg-white data-[closed]:animate-opacity-show-reverse data-[open]:animate-opacity-show data-[active]:ring-primary data-[active]:ring-2">
@@ -77,10 +78,491 @@ export const Item = function ({ title, description }) {
   </Tabs.Tab>
 </Tabs>
 
-## Basic exmaple
+## Examples
 
-```
-code
+팝오버를 가장 간단하게 구축하려면 `Popover` 컴포넌트를 불러와 컴파운드 패턴으로 연결된 `Popover.Trigger`와 `Popover.Content`를 구성하면 됩니다.
+
+`Popover.Trigger`를 클릭하면 자동으로 `Popover.Content`가 열리거나 닫힙니다. 콘텐츠가 열려 있을 때 내용 외부를 클릭하거나 Escape 키를 누르면 자동으로 팝 오버가 닫힙니다.
+
+```jsx
+import { Popover } from "zeroless";
+
+function Example() {
+  return (
+    <Popover>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <div>Popover content</div>
+      </Popover.Content>
+    </Popover>
+  );
+}
 ```
 
 ### Controlled
+
+React의 기본 훅을 활용하여 팝오버 컴포넌트를 프로그래밍 방식으로 제어할 수 있습니다.
+
+```jsx
+import { useState } from "react";
+import { Popover } from "zeroless";
+
+function Example() {
+  const [isOpen, setOpen] = useState(false);
+
+  const handleChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+  };
+
+  return (
+    <Popover isOpen={isOpen} onChange={handleChange}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>Popover content</Popover.Content>
+    </Popover>
+  );
+}
+```
+
+팝오버를 더 세밀하게 제어하고 맞춤화하려면 zeroless가 제공하는 usePopover 훅을 활용할 수 있습니다. rootProps에는 팝오버의 상태를 포함한 컴포넌트를 제어하기 위한 모든 속성과 로직이 담겨 있습니다. 이를 통해 로직을 재사용하고 커스터마이즈할 수 있습니다.
+
+```jsx
+import { Popover, usePopover } from "zeroless";
+
+function Example() {
+  const { rootProps } = usePopover({ defaultOpen: false });
+
+  return (
+    <Popover {...rootProps}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <div>Popover content</div>
+      </Popover.Content>
+    </Popover>
+  );
+}
+```
+
+usePopover 훅을 사용하면 컴파운드 패턴 없이 트리거 컴포넌트를 원하는 대로 커스터마이즈할 수 있습니다.
+
+```jsx
+import { PopoverContent, usePopover } from "zeroless";
+
+function Example() {
+  const { triggerProps, popoverContentProps } =
+    usePopover <
+    HTMLButtonElement >
+    {
+      defaultOpen: false,
+    };
+
+  return (
+    <div>
+      <button {...triggerProps}>click</button>
+      <PopoverContent {...popoverContentProps}>
+        <div>Popover content</div>
+      </PopoverContent>
+    </div>
+  );
+}
+```
+
+이처럼 팝오버 컴포넌트는 간단한 사용법과 고급 커스터마이징 기능을 모두 제공합니다. 사용자는 자신의 상황에 맞는 적절한 방식을 선택하여 활용할 수 있습니다.
+
+## Styling
+
+팝오버는 헤드리스 컴포넌트이기 때문에 기본적으로 스타일이 지정되어 있지 않습니다. 사용자는 자신의 전사적인 상황에 맞춰 스타일을 적용하면 됩니다.
+
+사용자가 적절한 스타일링을 할 수 있도록 헤드리스 컴포넌트는 다양한 상태를 추적합니다. 팝오버가 열려 있는지 닫혀 있는지, 포커스, 활성화, 호버 상태인지 등을 추적하여 사용자에게 제공합니다.
+
+### Using Data attributes
+
+헤드리스 컴포넌트는 추적한 상태를 `data-*` 속성으로 각 컴포넌트에 노출합니다. 예를 들어, 팝오버 컴포넌트가 열려 있으면 `data-open` 속성이 트리거 컴포넌트와 콘텐츠 컴포넌트에 표시됩니다.
+
+이러한 속성을 CSS Attribute selectors를 사용하여 스타일링을 적용할 수 있습니다. 아래는 tailwind를 사용한 예시입니다.
+
+```jsx
+function Example() {
+  return (
+    <Popover offset={5}>
+      <Popover.Trigger className="text-black/50 data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-black">
+        popover
+      </Popover.Trigger>
+      <Popover.Content className="data-[closed]:animate-opacity-show-reverse data-[open]:animate-opacity-show data-[hover]:ring-2 data-[hover]:ring-primary">
+        <div>Popover content</div>
+      </Popover.Content>
+    </Popover>
+  );
+}
+```
+
+<Preview height={75}>
+  <Popover offset={5}>
+    <Popover.Trigger className="text-black/50 data-[active]:text-black data-[hover]:text-black data-[focus]:outline-1 data-[focus]:outline-black">
+      popover
+    </Popover.Trigger>
+    <Popover.Content className="data-[closed]:animate-opacity-show-reverse data-[open]:animate-opacity-show data-[hover]:ring-2 data-[hover]:ring-primary">
+      <div>Popover content</div>
+    </Popover.Content>
+  </Popover>
+</Preview>
+Component API 섹션에서 사용 가능한 data 속성들을 확인할 수 있습니다.
+
+### Using render props
+
+컴포넌트는 render props를 통해 현재 상태 정보를 노출합니다. 이를 활용하여 상태에 따라 동적으로 스타일을 적용하거나 다른 내용을 렌더링할 수 있습니다.
+
+```jsx
+import { ChevronUpIcon } from "@radix-ui/react-icons";
+
+function Example() {
+  return (
+    <Popover placement="top">
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        {({ isOpen, placement }) => (
+          <>
+            {isOpen && (
+              <ChevronUpIcon
+                className={clsx(
+                  "h-6 w-6 text-black/50",
+                  placement === "top" && "rotate-180",
+                  placement === "left" && "rotate-90",
+                  placement === "top" && "rotate-270",
+                )}
+              />
+            )}
+            <div>{placement}</div>
+          </>
+        )}
+      </Popover.Content>
+    </Popover>
+  );
+}
+```
+
+import { ChevronUpIcon } from "@radix-ui/react-icons";
+
+<Preview height={75}>
+  <Popover placement="top">
+    <Popover.Trigger>click</Popover.Trigger>
+    <Popover.Content>
+      {({ isOpen, placement }) => (
+        <>
+          {isOpen && (
+            <ChevronUpIcon
+              className={clsx(
+                "h-6 w-6 text-black/50",
+                placement === "top" && "rotate-180",
+                placement === "left" && "rotate-90",
+                placement === "top" && "rotate-270",
+              )}
+            />
+          )}
+          <div>{placement}</div>
+        </>
+      )}
+    </Popover.Content>
+  </Popover>
+</Preview>
+Component API 섹션에서 사용 가능한 render props를 확인할 수 있습니다.
+
+## Positioning
+
+### Placement
+
+팝오버의 앵커 요소에 대한 위치는 `placement` prop으로 조정할 수 있습니다. 또한 팝오버는 공간이 부족할 경우 자동으로 반대 방향으로 전환됩니다.
+
+```jsx
+function Example() {
+  return (
+    <Popover placement={"left"}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <div>Popover content</div>
+      </Popover.Content>
+    </Popover>
+  );
+}
+```
+
+### Offset
+
+팝오버의 앵커 요소에 대한 오프셋은 `offset` 속성을 사용하여 조정할 수 있습니다. `offset` 속성은 요소와 앵커 요소 사이의 주축을 따라 적용되는 간격을 제어합니다
+
+```jsx
+function Example() {
+  return (
+    <Popover offset={50}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <div>Popover content</div>
+      </Popover.Content>
+    </Popover>
+  );
+}
+```
+
+### Flipping
+
+기본적으로 `usePopover`는 원래 배치 위치가 화면 밖으로 렌더링되는 상황에서 주축을 따라 팝오버를 뒤집으려고 시도합니다. 이는 `shouldFlip={false}`를 설정하여 재정의할 수 있습니다.
+
+```jsx
+function Example() {
+  return (
+    <Popover shouldFlip={false}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <div>Popover content</div>
+      </Popover.Content>
+    </Popover>
+  );
+}
+```
+
+## Using With usePopover hook
+
+팝오버 컴포넌트의 상태 제어, 로직 확장, 또는 트리거 컴포넌트를 자체적으로 구현하는 등 유연한 커스터마이징이 필요한 경우,`usePopover` 훅을 활용할 수 있습니다. `usePopover` 훅은 팝오버 컴포넌트를 구축하는 데 필요한 모든 요소를 포함하고 있으며, 이를 통해 팝오버 컴포넌트를 완벽하게 제어할 수 있습니다.
+
+```jsx
+function Example() {
+  const { rootProps, isOpen } = usePopover({
+    defaultOpen: false,
+    placement: "left",
+    offset: 50,
+  });
+
+  return (
+    <Popover {...rootProps}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <div>Popover content</div>
+      </Popover.Content>
+      {isOpen && <div>Popover is open</div>}
+    </Popover>
+  );
+}
+```
+
+외부에서 상태나 `ref`를 관리해야 하는 경우, `usePopover` 훅에 인자를 전달할 수 있습니다. `onChange` prop을 사용하면 팝오버의 상태를 제어할 수 있습니다.
+
+```jsx
+function Example() {
+  const ref = useRef < HTMLButtonElement > null;
+  const [isOpen, setOpen] = useState(false);
+  const { rootProps } = usePopover({
+    isOpen,
+    onChange: setOpen,
+    triggerRef: ref,
+  });
+
+  return (
+    <Popover {...rootProps}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <div>Popover content</div>
+      </Popover.Content>
+      {isOpen && <div>Popover is open</div>}
+    </Popover>
+  );
+}
+```
+
+### Customize logic
+
+`usePopover` 훅을 활용하면 팝오버 제어 로직을 재사용하고 사용자 정의하여 팝오버의 동작을 원하는 대로 조정할 수 있습니다.
+
+```jsx
+function Example() {
+  const { rootProps, toggle, close } = usePopover({
+    defaultOpen: false,
+  });
+
+  const handleClose = () => {
+    logger(//...);
+    close();
+  };
+
+  const handleToggle = () => {
+	  logger(//...);
+    toggle();
+  };
+
+  return (
+    <Popover {...rootProps} onToggle={handleToggle}>
+      <Popover.Trigger>click</Popover.Trigger>
+      <Popover.Content>
+        <button onClick={handleClose}>close</button>
+        <div>Popover content</div>
+      </Popover.Content>
+    </Popover>
+  );
+}
+```
+
+### Customizing component
+
+`usePopover` 훅을 사용하면 `Popover` 컴포넌트가 제공하는 기본 트리거 컴포넌트 대신 자신만의 커스텀 트리거 컴포넌트를 만들 수 있습니다. `usePopover`로부터 `triggerProps`를 받아 이를 커스텀 컴포넌트에 전달하기만 하면 됩니다.
+
+```jsx
+function Example() {
+  const { rootProps, triggerProps } =
+    usePopover <
+    HTMLDivElement >
+    {
+      defaultOpen: false,
+    };
+
+  return (
+    <>
+      <div {...triggerProps}>click</div>
+      <Popover {...rootProps}>
+        <Popover.Content>
+          <div>Popover content</div>
+        </Popover.Content>
+      </Popover>
+    </>
+  );
+}
+```
+
+`usePopover`의 `triggerProps`와 `popoverContentProps`를 전달하면 컴파운드 패턴 없이 팝오버를 사용할 수 있습니다. `usePopover` 훅으로 팝오버의 모든 기능을 완벽하게 제어할 수 있습니다.
+
+```jsx
+function Example() {
+  const { triggerProps, popoverContentProps } =
+    usePopover <
+    HTMLDivElement >
+    {
+      defaultOpen: false,
+    };
+
+  return (
+    <div>
+      <PopoverTrigger as="div" {...triggerProps}>
+        click
+      </PopoverTrigger>
+      <PopoverContent {...popoverContentProps} placement="left">
+        <div>Popover content</div>
+      </PopoverContent>
+    </div>
+  );
+}
+```
+
+## Rendering as different elements
+
+기본적으로 `Popover`와 그 하위 컴포넌트들은 각각 해당 컴포넌트에 적합한 기본 요소로 렌더링됩니다. `PopoverContent`컴포넌트는 `<div>`로 렌더링되며, `PopoverButton` 컴포넌트는 `<button>`으로 렌더링됩니다.
+
+`as` prop을 사용하여 컴포넌트를 다른 요소나 사용자 정의 컴포넌트로 렌더링할 수 있습니다. 이때 사용자 정의 컴포넌트가 [ref를 전달](https://react.dev/reference/react/forwardRef)하도록 해야 올바르게 연결할 수 있습니다.
+
+```jsx
+const MyCustomButton = forwardRef<HTMLButtonElement, any>(function (props, ref) {
+  return <button className="..." ref={ref} {...props} />;
+});
+
+function Example() {
+  const { triggerProps, popoverContentProps } = usePopover({
+    defaultOpen: false,
+  });
+
+  return (
+    <>
+      <PopoverTrigger {...triggerProps} as={MyCustomButton}>
+        click
+      </PopoverTrigger>
+      <PopoverContent {...popoverContentProps}>
+        <div>Popover content</div>
+      </PopoverContent>
+    </>
+  );
+}
+```
+
+## Keyboard interaction
+
+| **Key**       | **Description**                                     |
+| ------------- | --------------------------------------------------- |
+| `Space`       | 팝오버 트리거라 focus 되어 있을 때 팝오버 열기/닫기 |
+| `Enter`       | 팝오버 트리거라 focus 되어 있을 때 팝오버 열기/닫기 |
+| `Tab`         | focus 할 수 있는 다음 요소로 focus 이동             |
+| `Shift + Tab` | focus 할 수 있는 이전 요소로 focus 이동             |
+| `ESC`         | 팝오버를 닫고 팝오버 트리거로 focus                 |
+
+## Component API
+
+### Popover
+
+| **Name**    | **Default**     | **Type**                               | **Description**                                         |
+| ----------- | --------------- | -------------------------------------- | ------------------------------------------------------- |
+| isOpen      | false           | boolean                                | 팝오버가 기본적으로 열려있는지 여부(controlled).        |
+| defaultOpen | false           | boolean                                | 팝오버가 기본적으로 열려있는지 여부(uncontrolled).      |
+| onChange    | -               | (isOpen: boolean) => void              | 팝오버의 열린 상태가 변경되면 호출되는 핸들러           |
+| onOpen      | -               | void                                   | 팝오버가 열릴 때 호출되는 핸들러                        |
+| onToggle    | -               | void                                   | 팝오버의 상태가 변경될 때 호출되는 핸들러               |
+| onClose     | -               | void                                   | 팝오버의 닫힐 때 변경될 때 호출되는 핸들러              |
+| offset      | 8               | number                                 | 요소와 앵커의 주축에 따른 거리                          |
+| placement   | “bottom”        | "top" \| "right" \| "bottom" \| "left” | 앵커의 위지 기준으로 요소 배치                          |
+| shouldFlip  | true            | boolean                                | 렌더링할 공긴이 부족할 경우 방향을 뒤집을지 여부        |
+| triggerRef  | React.RefObject | React.RefObject                        | 트리거 요소의 ref를 외부에서 주입 받을 경우 사용        |
+| popoverRef  | React.RefObject | React.RefObject                        | 팝오버 컨텐츠 요소의 ref를 외부에서 주입 받을 경우 사용 |
+
+### PopoverTrigger(Popover.trigger)
+
+| **Name** | **Default** | **Type**          | **Description**                                      |
+| -------- | ----------- | ----------------- | ---------------------------------------------------- |
+| as       | ‘button’    | React.ElementType | 팝오버 트리거가 렌더링 되어야하는 요소 혹은 구성요소 |
+
+| **Data Attribute** | **Render Prop** | **Type** | **Description**                                    |
+| ------------------ | --------------- | -------- | -------------------------------------------------- |
+| data-open          | isOpen          | boolean  | 팝오버가 열려있는지 여부                           |
+| data-focus         | isFocus         | boolean  | 팝오버 트리거에 포커스가 있는지 여부               |
+| data-active        | isActive        | boolean  | 팝오버 트리거가 활성 상태인지 눌려진 상태인지 여부 |
+| data-hover         | isHovered       | boolean  | 팝오버 트리거에 마우스 호버 여부                   |
+
+### PopoverContent(Popover.content)
+
+| **Name** | **Default** | **Type**          | **Description**                                      |
+| -------- | ----------- | ----------------- | ---------------------------------------------------- |
+| as       |             | React.ElementType | 팝오버 컨텐츠가 렌더링 되어야하는 요소 혹은 구성요소 |
+
+| **Data Attribute** | **Render Prop** | **Type**                               | **Description**                                    |
+| ------------------ | --------------- | -------------------------------------- | -------------------------------------------------- |
+| data-open          | isOpen          | boolean                                | 팝오버가 열려있는지 여부                           |
+| data-closed        | -               | boolean                                | 팝오버가 닫혀있는지 여부                           |
+| data-placement     | placement       | "top" \| "right" \| "bottom" \| "left” | 팝오버의 배치                                      |
+| data-focus         | isFocus         | boolean                                | 팝오버 컨텐츠에 포커스가 있는지 여부               |
+| data-active        | isActive        | boolean                                | 팝오버 컨텐츠가 활성 상태인지 눌려진 상태인지 여부 |
+| data-hover         | isHovered       | boolean                                | 팝오버 컨텐츠에 마우스 호버 여부                   |
+
+### usePopover
+
+##### props
+
+usePopover의 props는 Popover 컴포넌트의 props와 동일합니다. usePopover는 팝오버 컴포넌트를 제어하고 확장하기 위한 로직을 제공합니다.
+
+| **Name**    | **Default**     | **Type**                               | **Description**                                         |
+| ----------- | --------------- | -------------------------------------- | ------------------------------------------------------- |
+| isOpen      | false           | boolean                                | 팝오버가 기본적으로 열려있는지 여부(controlled).        |
+| defaultOpen | false           | boolean                                | 팝오버가 기본적으로 열려있는지 여부(uncontrolled).      |
+| onChange    | -               | (isOpen: boolean) => void              | 팝오버의 열린 상태가 변경되면 호출되는 핸들러           |
+| onOpen      | -               | void                                   | 팝오버가 열릴 때 호출되는 핸들러                        |
+| onToggle    | -               | void                                   | 팝오버의 상태가 변경될 때 호출되는 핸들러               |
+| onClose     | -               | void                                   | 팝오버의 닫힐 때 변경될 때 호출되는 핸들러              |
+| offset      | 8               | number                                 | 요소와 앵커의 주축에 따른 거리                          |
+| placement   | “bottom”        | "top" \| "right" \| "bottom" \| "left” | 앵커의 위지 기준으로 요소 배치                          |
+| shouldFlip  | true            | boolean                                | 렌더링할 공긴이 부족할 경우 방향을 뒤집을지 여부        |
+| triggerRef  | React.RefObject | React.RefObject                        | 트리거 요소의 ref를 외부에서 주입 받을 경우 사용        |
+| popoverRef  | React.RefObject | React.RefObject                        | 팝오버 컨텐츠 요소의 ref를 외부에서 주입 받을 경우 사용 |
+
+##### return
+
+| **Name**            | **Description**                                                                                           |
+| ------------------- | --------------------------------------------------------------------------------------------------------- |
+| rootProps           | 컴파운드 패턴 사용 시 루트 컴포넌트에 구조 분해 할당으로 주입                                             |
+| triggerProps        | 트리거 컴포넌트를 독립적으로 사용하거나 사용자 지정 구성요소에 적용할 때는 구조 분해 할당으로 속성을 주입 |
+| popoverContentProps | 컨텐츠 컴포넌트를 독립적으로 사용할 때 구조 분해 할당으로 속성을 주입                                     |
+| isOpen              | 팝오버의 열기 상태                                                                                        |
+| setOpen             | 팝오버의 상태를 변경                                                                                      |
+| open                | 팝오버를 열기 상태로 변경                                                                                 |
+| close               | 팝오버를 닫기 상태로 변경                                                                                 |
+| toggle              | 팝오버의 열고 닫기 상태를 변경                                                                            |
