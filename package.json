@@ -1,7 +1,7 @@
 {
-  "name": "zeroless-docs",
+  "name": "core-zero-docs",
   "version": "0.0.1",
-  "description": "zeroless library docs",
+  "description": "core-zero library docs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seonghunYang/zeroless-docs.git"
+    "url": "git+https://github.com/seonghunYang/core-zero-docs.git"
   },
   "author": "Shu Ding <g@shud.in>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/seonghunYang/zeroless-docs/issues"
+    "url": "https://github.com/seonghunYang/core-zero-docs/issues"
   },
-  "homepage": "https://github.com/seonghunYang/zeroless-docs#readme",
+  "homepage": "https://github.com/seonghunYang/core-zero-docs#readme",
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.0",
     "clsx": "^2.1.1",
@@ -25,7 +25,7 @@
     "nextra-theme-docs": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "zeroless": "^0.0.1"
+    "core-zero": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "18.11.10",
